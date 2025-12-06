@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "metro-line-4-dashboard",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,7 +11,11 @@
   "dependencies": {
     "next": "16.0.7",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "recharts": "^2.12.7",
+    "@tanstack/react-table": "^8.20.5",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.445.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
