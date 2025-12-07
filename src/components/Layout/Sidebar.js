@@ -18,7 +18,7 @@ export default function Sidebar() {
         <>
             {/* Mobile menu button */}
             <button
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg"
+                className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label="Toggle menu"
             >
@@ -28,7 +28,7 @@ export default function Sidebar() {
             {/* Overlay for mobile */}
             {isOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 bg-black/50 z-40"
+                    className="lg:hidden fixed inset-0 bg-black/50 z-40 cursor-pointer"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -63,7 +63,7 @@ export default function Sidebar() {
                                 href={item.href}
                                 onClick={() => setIsOpen(false)}
                                 className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+                  flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-pointer
                   ${
                       isActive
                           ? "bg-blue-100 text-blue-700"

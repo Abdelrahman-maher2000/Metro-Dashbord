@@ -162,7 +162,7 @@ export default function DataTable() {
                                         setGlobalFilter("");
                                         updateFilters({ search: "" });
                                     }}
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                                     aria-label="Clear search"
                                 >
                                     <X size={18} />
@@ -172,7 +172,7 @@ export default function DataTable() {
                     </div>
                     <button
                         onClick={exportToCSV}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
                         aria-label="Export to CSV"
                     >
                         <Download size={18} />
@@ -308,7 +308,7 @@ export default function DataTable() {
                         <button
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
-                            className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                            className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 cursor-pointer"
                             aria-label="Previous page"
                         >
                             <ChevronLeft size={20} />
@@ -322,7 +322,7 @@ export default function DataTable() {
                         <button
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
-                            className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+                            className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 cursor-pointer"
                             aria-label="Next page"
                         >
                             <ChevronRight size={20} />

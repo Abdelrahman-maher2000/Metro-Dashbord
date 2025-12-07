@@ -108,7 +108,7 @@ export default function DateRangeFilter() {
                 {(startDate || endDate) && (
                     <button
                         onClick={clearFilter}
-                        className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
+                        className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 cursor-pointer"
                         aria-label="Clear date filter"
                     >
                         Clear

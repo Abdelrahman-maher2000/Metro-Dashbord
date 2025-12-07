@@ -16,7 +16,31 @@ export default function FilterBar() {
         stations.add("Open Air");
         // Remove "Companies" from the filter
         stations.delete("Companies");
-        return Array.from(stations).sort();
+
+        // Custom sort: St No.01 first, then Open Air, then rest alphabetically
+        return Array.from(stations).sort((a, b) => {
+            // St No.01 - Hadaek El Ashgar Station always comes first
+            if (a === "St No.01 - Hadaek El Ashgar Station")
+                return -1;
+            if (b === "St No.01 - Hadaek El Ashgar Station") return 1;
+
+            // Open Air comes right after St No.01
+            if (a === "Open Air") return -1;
+            if (b === "Open Air") return 1;
+
+            // For other stations with numbers (St No.02, St No.03, etc.), sort numerically
+            const stationMatchA = a.match(/^St No\.(\d+)/);
+            const stationMatchB = b.match(/^St No\.(\d+)/);
+            if (stationMatchA && stationMatchB) {
+                return (
+                    parseInt(stationMatchA[1]) -
+                    parseInt(stationMatchB[1])
+                );
+            }
+
+            // Default alphabetical sort for everything else
+            return a.localeCompare(b);
+        });
     }, [data]);
 
     const uniqueCategories = useMemo(() => {
@@ -59,7 +83,7 @@ export default function FilterBar() {
                                     station: e.target.value || null,
                                 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                         >
                             <option value="">All Stations</option>
                             {uniqueStations.map((station) => (
@@ -87,7 +111,7 @@ export default function FilterBar() {
                                     category: e.target.value || null,
                                 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                         >
                             <option value="">All Activities</option>
                             {uniqueCategories.map((category) => (
@@ -111,7 +135,7 @@ export default function FilterBar() {
                                 category: null,
                             });
                         }}
-                        className="text-sm text-blue-600 hover:underline"
+                        className="text-sm text-blue-600 hover:underline cursor-pointer"
                     >
                         Clear all filters
                     </button>

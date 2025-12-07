@@ -18,7 +18,7 @@ export default function RecordDetailModal({ record, onClose }) {
 
     return (
         <div
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 cursor-pointer"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
@@ -37,7 +37,7 @@ export default function RecordDetailModal({ record, onClose }) {
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                         aria-label="Close modal"
                     >
                         <X size={24} />
@@ -70,7 +70,7 @@ export default function RecordDetailModal({ record, onClose }) {
                 <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
                     <button
                         onClick={onClose}
-                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
                     >
                         Close
                     </button>

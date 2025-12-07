@@ -17,7 +17,87 @@ export default function StatusPieChart() {
     const { filteredData, filters } = useData();
 
     const activityCharts = useMemo(() => {
-        // When All Stations is selected, show one chart per Category
+        // When All Stations AND All Activities are selected, show charts grouped by Station, then by Activity Name
+        if (!filters.station && !filters.category) {
+            const stationMap = new Map();
+
+            filteredData.forEach((item) => {
+                const station =
+                    item.Category || item.category || "Unknown";
+                const activityName =
+                    item["Activity Name"] ||
+                    item.activityName ||
+                    "Unknown";
+
+                if (!stationMap.has(station)) {
+                    stationMap.set(station, new Map());
+                }
+
+                const activityMap = stationMap.get(station);
+                if (!activityMap.has(activityName)) {
+                    activityMap.set(activityName, {
+                        actual: [],
+                        planned: [],
+                    });
+                }
+
+                const actual =
+                    parseFloat(
+                        String(
+                            item.Actual || item.actual || "0"
+                        ).replace("%", "")
+                    ) || 0;
+                const planned =
+                    parseFloat(
+                        String(
+                            item.Planned || item.planned || "0"
+                        ).replace("%", "")
+                    ) || 0;
+
+                activityMap.get(activityName).actual.push(actual);
+                activityMap.get(activityName).planned.push(planned);
+            });
+
+            const allCharts = [];
+            stationMap.forEach((activityMap, station) => {
+                activityMap.forEach((data, activityName) => {
+                    const avgActual =
+                        data.actual.length > 0
+                            ? data.actual.reduce(
+                                  (sum, val) => sum + val,
+                                  0
+                              ) / data.actual.length
+                            : 0;
+                    const avgPlanned =
+                        data.planned.length > 0
+                            ? data.planned.reduce(
+                                  (sum, val) => sum + val,
+                                  0
+                              ) / data.planned.length
+                            : 0;
+
+                    allCharts.push({
+                        activityName: `${station} - ${activityName}`,
+                        station: station,
+                        activity: activityName,
+                        data: [
+                            { name: "Planned", value: avgPlanned },
+                            { name: "Actual", value: avgActual },
+                        ],
+                    });
+                });
+            });
+
+            return allCharts.sort((a, b) => {
+                const stationCompare = a.station.localeCompare(
+                    b.station
+                );
+                if (stationCompare !== 0) return stationCompare;
+                return a.activity.localeCompare(b.activity);
+            });
+        }
+
+        // When All Stations is selected (but activity is selected), show one chart per Category
         if (!filters.station) {
             const categoryMap = new Map();
 
@@ -195,15 +275,221 @@ export default function StatusPieChart() {
         );
     }
 
-    // Show multiple charts when: (All Stations) OR (station selected + all activities)
+    // Show multiple charts when: (All Stations + All Activities) OR (All Stations) OR (station selected + all activities)
     const showMultipleCharts =
-        !filters.station || (filters.station && !filters.category);
+        (!filters.station && !filters.category) ||
+        (!filters.station && filters.category) ||
+        (filters.station && !filters.category);
 
     if (showMultipleCharts && activityCharts.length > 1) {
         // Show multiple pie charts in a grid
-        const chartTitle = !filters.station
-            ? "Planned vs Actual by Category"
-            : "Planned vs Actual by Activity Name";
+        const chartTitle =
+            !filters.station && !filters.category
+                ? "Planned vs Actual by Activity Name (All Stations)"
+                : !filters.station
+                ? "Planned vs Actual by Category"
+                : "Planned vs Actual by Activity Name";
+
+        // When both filters are "All", group by station
+        if (!filters.station && !filters.category) {
+            const stationGroups = new Map();
+            activityCharts.forEach((chart) => {
+                if (!stationGroups.has(chart.station)) {
+                    stationGroups.set(chart.station, []);
+                }
+                stationGroups.get(chart.station).push(chart);
+            });
+
+            // Sort stations: Companies first, then St No.01, then Open Air, then rest
+            const sortedStationEntries = Array.from(
+                stationGroups.entries()
+            ).sort((a, b) => {
+                const stationA = a[0];
+                const stationB = b[0];
+
+                // Companies always comes first
+                if (stationA === "Companies") return -1;
+                if (stationB === "Companies") return 1;
+
+                // St No.01 - Hadaek El Ashgar Station comes after Companies
+                if (
+                    stationA === "St No.01 - Hadaek El Ashgar Station"
+                )
+                    return -1;
+                if (
+                    stationB === "St No.01 - Hadaek El Ashgar Station"
+                )
+                    return 1;
+
+                // Open Air comes right after St No.01
+                if (stationA === "Open Air") return -1;
+                if (stationB === "Open Air") return 1;
+
+                // For other stations with numbers (St No.02, St No.03, etc.), sort numerically
+                const stationMatchA = stationA.match(/^St No\.(\d+)/);
+                const stationMatchB = stationB.match(/^St No\.(\d+)/);
+                if (stationMatchA && stationMatchB) {
+                    return (
+                        parseInt(stationMatchA[1]) -
+                        parseInt(stationMatchB[1])
+                    );
+                }
+
+                // Default alphabetical sort for everything else
+                return stationA.localeCompare(stationB);
+            });
+
+            return (
+                <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                        {chartTitle}
+                    </h3>
+                    {sortedStationEntries.map(([station, charts]) => (
+                        <div key={station} className="mb-8">
+                            <h4 className="text-base font-semibold text-gray-900 mb-4">
+                                {station}
+                            </h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                                {charts.map((chart) => {
+                                    const plannedValue =
+                                        chart.data.find(
+                                            (d) =>
+                                                d.name === "Planned"
+                                        )?.value || 0;
+                                    const actualValue =
+                                        chart.data.find(
+                                            (d) => d.name === "Actual"
+                                        )?.value || 0;
+
+                                    return (
+                                        <div
+                                            key={chart.activityName}
+                                            className="flex flex-col items-center bg-cyan-100 rounded-xl p-4 border border-gray-200"
+                                        >
+                                            <h5 className="text-xs font-semibold text-gray-900 mb-3 text-center">
+                                                {chart.activity}
+                                            </h5>
+                                            <ResponsiveContainer
+                                                width="100%"
+                                                height={180}
+                                            >
+                                                <PieChart>
+                                                    <Pie
+                                                        data={
+                                                            chart.data
+                                                        }
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        labelLine={
+                                                            true
+                                                        }
+                                                        label={({
+                                                            value,
+                                                            percent,
+                                                        }) => {
+                                                            if (
+                                                                percent <
+                                                                0.05
+                                                            )
+                                                                return null;
+                                                            return `${value.toFixed(
+                                                                1
+                                                            )}%`;
+                                                        }}
+                                                        outerRadius={
+                                                            60
+                                                        }
+                                                        innerRadius={
+                                                            35
+                                                        }
+                                                        fill="#8884d8"
+                                                        dataKey="value"
+                                                        paddingAngle={
+                                                            2
+                                                        }
+                                                    >
+                                                        {chart.data.map(
+                                                            (
+                                                                entry,
+                                                                index
+                                                            ) => (
+                                                                <Cell
+                                                                    key={`cell-${index}`}
+                                                                    fill={
+                                                                        COLORS[
+                                                                            index %
+                                                                                COLORS.length
+                                                                        ]
+                                                                    }
+                                                                    stroke="#fff"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
+                                                    </Pie>
+                                                    <Tooltip
+                                                        contentStyle={{
+                                                            backgroundColor:
+                                                                "#ffffff",
+                                                            border: "1px solid #e5e7eb",
+                                                            borderRadius:
+                                                                "8px",
+                                                            boxShadow:
+                                                                "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                                        }}
+                                                        formatter={(
+                                                            value,
+                                                            name,
+                                                            props
+                                                        ) => [
+                                                            `${value.toFixed(
+                                                                1
+                                                            )}%`,
+                                                            props
+                                                                .payload
+                                                                .name ===
+                                                            "Planned"
+                                                                ? "Planned"
+                                                                : "Actual",
+                                                        ]}
+                                                    />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                            <div className="mt-2 w-full space-y-1 text-xs">
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-600">
+                                                        Planned:
+                                                    </span>
+                                                    <span className="font-semibold text-blue-600">
+                                                        {plannedValue.toFixed(
+                                                            1
+                                                        )}
+                                                        %
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-600">
+                                                        Actual:
+                                                    </span>
+                                                    <span className="font-semibold text-green-600">
+                                                        {actualValue.toFixed(
+                                                            1
+                                                        )}
+                                                        %
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
 
         return (
             <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">

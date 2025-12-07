@@ -181,31 +181,35 @@ export default function BudgetStackedBar() {
 
     // When All Stations is selected, show multiple bar charts (one per category)
     if (!filters.station && categoryCharts.length > 0) {
+        const chartTitle = !filters.category
+            ? "Actual vs Planned by Activity Name (All Stations)"
+            : "Actual vs Planned by Category";
+
         return (
             <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                    Actual vs Planned by Category
+                    {chartTitle}
                 </h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="space-y-8">
                     {categoryCharts.map((categoryChart) => (
                         <div
                             key={categoryChart.category}
-                            className="bg-gray-50 rounded-xl p-4 border border-gray-200"
+                            className="bg-gray-50 rounded-xl p-6 border border-gray-200"
                         >
-                            <h4 className="text-base font-semibold text-gray-900 mb-4 text-center">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-4 text-center">
                                 {categoryChart.category}
                             </h4>
                             <ResponsiveContainer
                                 width="100%"
-                                height={300}
+                                height={350}
                             >
                                 <BarChart
                                     data={categoryChart.activities}
                                     margin={{
-                                        bottom: 60,
+                                        bottom: 80,
                                         top: 10,
-                                        right: 10,
-                                        left: 10,
+                                        right: 30,
+                                        left: 20,
                                     }}
                                 >
                                     <CartesianGrid
@@ -216,15 +220,29 @@ export default function BudgetStackedBar() {
                                         dataKey="fullName"
                                         angle={-45}
                                         textAnchor="end"
-                                        height={80}
+                                        height={100}
                                         tick={{
                                             fill: "#374151",
-                                            fontSize: 10,
+                                            fontSize: 11,
+                                        }}
+                                        label={{
+                                            value: "Activity Name",
+                                            position: "insideBottom",
+                                            offset: -5,
+                                            style: {
+                                                textAnchor: "middle",
+                                                fill: "#374151",
+                                            },
                                         }}
                                     />
                                     <YAxis
                                         tick={{ fill: "#374151" }}
                                         domain={[0, 100]}
+                                        label={{
+                                            value: "Progress %",
+                                            angle: -90,
+                                            position: "insideLeft",
+                                        }}
                                     />
                                     <Tooltip
                                         contentStyle={{

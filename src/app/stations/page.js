@@ -136,7 +136,7 @@ export default function StationsPage() {
                                         category.category
                                     )
                                 }
-                                className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                                className="text-sm text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                             >
                                 View on Dashboard →
                             </button>
