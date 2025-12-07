@@ -89,10 +89,42 @@ export default function StationsPage() {
             });
         });
 
-        // Sort categories by name
-        return result.sort((a, b) =>
-            a.category.localeCompare(b.category)
-        );
+        // Custom sort: Companies first, then St No.01, then Open-Air section, then rest
+        return result.sort((a, b) => {
+            const categoryA = a.category;
+            const categoryB = b.category;
+
+            // Companies always comes first
+            if (categoryA === "Companies") return -1;
+            if (categoryB === "Companies") return 1;
+
+            // St No.01 - Hadaek El Ashgar Station comes after Companies
+            if (categoryA === "St No.01 - Hadaek El Ashgar Station")
+                return -1;
+            if (categoryB === "St No.01 - Hadaek El Ashgar Station")
+                return 1;
+
+            // Open-Air section comes right after St No.01
+            if (categoryA === "Open-Air section") return -1;
+            if (categoryB === "Open-Air section") return 1;
+
+            // Vertical Shaft comes right after Open-Air section
+            if (categoryA === "Vertical Shaft") return -1;
+            if (categoryB === "Vertical Shaft") return 1;
+
+            // For other stations with numbers (St No.02, St No.03, etc.), sort numerically
+            const stationMatchA = categoryA.match(/^St No\.(\d+)/);
+            const stationMatchB = categoryB.match(/^St No\.(\d+)/);
+            if (stationMatchA && stationMatchB) {
+                return (
+                    parseInt(stationMatchA[1]) -
+                    parseInt(stationMatchB[1])
+                );
+            }
+
+            // Default alphabetical sort for everything else
+            return categoryA.localeCompare(categoryB);
+        });
     }, [data]);
 
     const handleCategoryClick = (categoryName) => {

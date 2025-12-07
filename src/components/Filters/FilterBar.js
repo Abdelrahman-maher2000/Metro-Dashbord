@@ -12,21 +12,27 @@ export default function FilterBar() {
             if (item.Category) stations.add(item.Category);
             if (item.category) stations.add(item.category);
         });
-        // Always include "Open Air" in the stations filter (matching data format)
-        stations.add("Open Air");
         // Remove "Companies" from the filter
         stations.delete("Companies");
 
-        // Custom sort: St No.01 first, then Open Air, then rest alphabetically
+        // Custom sort: Companies first, then St No.01, then Open-Air section (mapped to "Open Air"), then rest
         return Array.from(stations).sort((a, b) => {
-            // St No.01 - Hadaek El Ashgar Station always comes first
+            // Companies always comes first
+            if (a === "Companies") return -1;
+            if (b === "Companies") return 1;
+
+            // St No.01 - Hadaek El Ashgar Station comes after Companies
             if (a === "St No.01 - Hadaek El Ashgar Station")
                 return -1;
             if (b === "St No.01 - Hadaek El Ashgar Station") return 1;
 
-            // Open Air comes right after St No.01
-            if (a === "Open Air") return -1;
-            if (b === "Open Air") return 1;
+            // Open-Air section comes right after St No.01
+            if (a === "Open-Air section") return -1;
+            if (b === "Open-Air section") return 1;
+
+            // Vertical Shaft comes right after Open-Air section
+            if (a === "Vertical Shaft") return -1;
+            if (b === "Vertical Shaft") return 1;
 
             // For other stations with numbers (St No.02, St No.03, etc.), sort numerically
             const stationMatchA = a.match(/^St No\.(\d+)/);
@@ -44,13 +50,13 @@ export default function FilterBar() {
     }, [data]);
 
     const uniqueCategories = useMemo(() => {
-        // Only show specific Activity Names in the specified order
+        // Only show specific Activity Names in the specified order (matching new data format)
         const allowedActivities = [
-            "Civil",
-            "Esc.& Ele",
-            "Electrical",
-            "Arch.",
-            "Mechanical",
+            "Civil Work",
+            "Escalators&Elevators",
+            "Electrical Work",
+            "Arch. Work",
+            "Mechanical Work",
         ];
         const categories = new Set();
         data.forEach((item) => {

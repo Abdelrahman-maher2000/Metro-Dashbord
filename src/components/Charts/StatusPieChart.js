@@ -300,7 +300,7 @@ export default function StatusPieChart() {
                 stationGroups.get(chart.station).push(chart);
             });
 
-            // Sort stations: Companies first, then St No.01, then Open Air, then rest
+            // Sort stations: Companies first, then St No.01, then Open-Air section, then rest
             const sortedStationEntries = Array.from(
                 stationGroups.entries()
             ).sort((a, b) => {
@@ -321,9 +321,13 @@ export default function StatusPieChart() {
                 )
                     return 1;
 
-                // Open Air comes right after St No.01
-                if (stationA === "Open Air") return -1;
-                if (stationB === "Open Air") return 1;
+                // Open-Air section comes right after St No.01
+                if (stationA === "Open-Air section") return -1;
+                if (stationB === "Open-Air section") return 1;
+
+                // Vertical Shaft comes right after Open-Air section
+                if (stationA === "Vertical Shaft") return -1;
+                if (stationB === "Vertical Shaft") return 1;
 
                 // For other stations with numbers (St No.02, St No.03, etc.), sort numerically
                 const stationMatchA = stationA.match(/^St No\.(\d+)/);

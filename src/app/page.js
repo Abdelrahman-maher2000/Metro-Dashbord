@@ -119,7 +119,7 @@ export default function Dashboard() {
                 });
             });
 
-            // Custom sort: Companies first, then St No.01, then Open Air, then rest alphabetically
+            // Custom sort: Companies first, then St No.01, then Open-Air section, then rest alphabetically
             return groups.sort((a, b) => {
                 // Companies always comes first
                 if (a.station === "Companies") return -1;
@@ -137,9 +137,13 @@ export default function Dashboard() {
                 )
                     return 1;
 
-                // Open Air comes right after St No.01
-                if (a.station === "Open Air") return -1;
-                if (b.station === "Open Air") return 1;
+                // Open-Air section comes right after St No.01
+                if (a.station === "Open-Air section") return -1;
+                if (b.station === "Open-Air section") return 1;
+
+                // Vertical Shaft comes right after Open-Air section
+                if (a.station === "Vertical Shaft") return -1;
+                if (b.station === "Vertical Shaft") return 1;
 
                 // For other stations with numbers (St No.02, St No.03, etc.), sort numerically
                 const stationMatchA =
