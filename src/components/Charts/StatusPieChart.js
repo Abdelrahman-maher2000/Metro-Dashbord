@@ -16,17 +16,14 @@ const COLORS = ["#3b82f6", "#10b981"]; // Blue for Planned, Green for Actual
 export default function StatusPieChart() {
     const { filteredData, filters } = useData();
 
-    // Check if we should show multiple pie charts (station selected + all activities)
-    const showMultipleCharts = filters.station && !filters.category;
-
     const activityCharts = useMemo(() => {
-        if (!showMultipleCharts) {
-            // Single chart - calculate overall average
-            let totalActual = 0;
-            let totalPlanned = 0;
-            let count = 0;
+        // When All Stations is selected, show one chart per Category
+        if (!filters.station) {
+            const categoryMap = new Map();
 
             filteredData.forEach((item) => {
+                const category =
+                    item.Category || item.category || "Unknown";
                 const actual =
                     parseFloat(
                         String(
@@ -39,33 +36,120 @@ export default function StatusPieChart() {
                             item.Planned || item.planned || "0"
                         ).replace("%", "")
                     ) || 0;
-                totalActual += actual;
-                totalPlanned += planned;
-                count++;
+
+                if (!categoryMap.has(category)) {
+                    categoryMap.set(category, {
+                        actual: [],
+                        planned: [],
+                    });
+                }
+
+                categoryMap.get(category).actual.push(actual);
+                categoryMap.get(category).planned.push(planned);
             });
 
-            const avgActual = count > 0 ? totalActual / count : 0;
-            const avgPlanned = count > 0 ? totalPlanned / count : 0;
+            const charts = [];
+            categoryMap.forEach((data, category) => {
+                const avgActual =
+                    data.actual.length > 0
+                        ? data.actual.reduce(
+                              (sum, val) => sum + val,
+                              0
+                          ) / data.actual.length
+                        : 0;
+                const avgPlanned =
+                    data.planned.length > 0
+                        ? data.planned.reduce(
+                              (sum, val) => sum + val,
+                              0
+                          ) / data.planned.length
+                        : 0;
 
-            return [
-                {
-                    activityName: "Overall",
+                charts.push({
+                    activityName: category,
                     data: [
                         { name: "Planned", value: avgPlanned },
                         { name: "Actual", value: avgActual },
                     ],
-                },
-            ];
+                });
+            });
+
+            return charts.sort((a, b) =>
+                a.activityName.localeCompare(b.activityName)
+            );
         }
 
-        // Multiple charts - one for each Activity Name
-        const activityMap = new Map();
+        // When a specific station is selected and no category filter, show one chart per Activity Name
+        if (filters.station && !filters.category) {
+            const activityMap = new Map();
+
+            filteredData.forEach((item) => {
+                const activityName =
+                    item["Activity Name"] ||
+                    item.activityName ||
+                    "Unknown";
+                const actual =
+                    parseFloat(
+                        String(
+                            item.Actual || item.actual || "0"
+                        ).replace("%", "")
+                    ) || 0;
+                const planned =
+                    parseFloat(
+                        String(
+                            item.Planned || item.planned || "0"
+                        ).replace("%", "")
+                    ) || 0;
+
+                if (!activityMap.has(activityName)) {
+                    activityMap.set(activityName, {
+                        actual: [],
+                        planned: [],
+                    });
+                }
+
+                activityMap.get(activityName).actual.push(actual);
+                activityMap.get(activityName).planned.push(planned);
+            });
+
+            const charts = [];
+            activityMap.forEach((data, activityName) => {
+                const avgActual =
+                    data.actual.length > 0
+                        ? data.actual.reduce(
+                              (sum, val) => sum + val,
+                              0
+                          ) / data.actual.length
+                        : 0;
+                const avgPlanned =
+                    data.planned.length > 0
+                        ? data.planned.reduce(
+                              (sum, val) => sum + val,
+                              0
+                          ) / data.planned.length
+                        : 0;
+
+                charts.push({
+                    activityName,
+                    data: [
+                        { name: "Planned", value: avgPlanned },
+                        { name: "Actual", value: avgActual },
+                    ],
+                });
+            });
+
+            // Sort by activity name
+            return charts.sort((a, b) =>
+                a.activityName.localeCompare(b.activityName)
+            );
+        }
+
+        // Single chart - calculate overall average for selected station and activity
+        let totalActual = 0;
+        let totalPlanned = 0;
+        let count = 0;
 
         filteredData.forEach((item) => {
-            const activityName =
-                item["Activity Name"] ||
-                item.activityName ||
-                "Unknown";
             const actual =
                 parseFloat(
                     String(item.Actual || item.actual || "0").replace(
@@ -79,64 +163,24 @@ export default function StatusPieChart() {
                         item.Planned || item.planned || "0"
                     ).replace("%", "")
                 ) || 0;
-
-            if (!activityMap.has(activityName)) {
-                activityMap.set(activityName, {
-                    actual: [],
-                    planned: [],
-                });
-            }
-
-            activityMap.get(activityName).actual.push(actual);
-            activityMap.get(activityName).planned.push(planned);
+            totalActual += actual;
+            totalPlanned += planned;
+            count++;
         });
 
-        const charts = [];
-        activityMap.forEach((data, activityName) => {
-            const avgActual =
-                data.actual.length > 0
-                    ? data.actual.reduce((sum, val) => sum + val, 0) /
-                      data.actual.length
-                    : 0;
-            const avgPlanned =
-                data.planned.length > 0
-                    ? data.planned.reduce(
-                          (sum, val) => sum + val,
-                          0
-                      ) / data.planned.length
-                    : 0;
+        const avgActual = count > 0 ? totalActual / count : 0;
+        const avgPlanned = count > 0 ? totalPlanned / count : 0;
 
-            charts.push({
-                activityName,
+        return [
+            {
+                activityName: "Overall",
                 data: [
                     { name: "Planned", value: avgPlanned },
                     { name: "Actual", value: avgActual },
                 ],
-            });
-        });
-
-        // Sort by activity name
-        return charts.sort((a, b) =>
-            a.activityName.localeCompare(b.activityName)
-        );
-    }, [filteredData, showMultipleCharts]);
-
-    // Show message when no station filter is selected
-    if (!filters.station) {
-        return (
-            <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                    Planned vs Actual
-                </h3>
-                <div className="flex items-center justify-center py-12">
-                    <p className="text-gray-500 text-center text-lg">
-                        Please select a station to view Planned vs
-                        Actual progress
-                    </p>
-                </div>
-            </div>
-        );
-    }
+            },
+        ];
+    }, [filteredData, filters.station, filters.category]);
 
     if (activityCharts.length === 0) {
         return (
@@ -151,12 +195,20 @@ export default function StatusPieChart() {
         );
     }
 
+    // Show multiple charts when: (All Stations) OR (station selected + all activities)
+    const showMultipleCharts =
+        !filters.station || (filters.station && !filters.category);
+
     if (showMultipleCharts && activityCharts.length > 1) {
         // Show multiple pie charts in a grid
+        const chartTitle = !filters.station
+            ? "Planned vs Actual by Category"
+            : "Planned vs Actual by Activity Name";
+
         return (
             <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                    Planned vs Actual by Activity Name
+                    {chartTitle}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {activityCharts.map((chart) => {
