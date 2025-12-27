@@ -1,12 +1,17 @@
 "use client";
 
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectData,
+    selectSetFilters,
+} from "@/stores/useDataStore";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { MapPin } from "lucide-react";
 
 export default function StationsPage() {
-    const { data, updateFilters } = useData();
+    const data = useDataStore(selectData);
+    const updateFilters = useDataStore(selectSetFilters);
     const router = useRouter();
 
     // Group data by Category, then by Activity Name (using all data, not filtered)

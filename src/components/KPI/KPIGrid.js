@@ -2,10 +2,10 @@
 
 import { DollarSign } from "lucide-react";
 import KPICard from "./KPICard";
-import { useData } from "@/contexts/DataContext";
+import { useDataStore, selectKPIs } from "@/stores/useDataStore";
 
 export default function KPIGrid() {
-    const { kpis } = useData();
+    const kpis = useDataStore(selectKPIs);
 
     return (
         <div className="grid grid-cols-1 gap-4 mb-6">

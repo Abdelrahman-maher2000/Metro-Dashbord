@@ -16,11 +16,18 @@ import {
     Search,
     X,
 } from "lucide-react";
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectFilteredData,
+    selectFilters,
+    selectSetFilters,
+} from "@/stores/useDataStore";
 import RecordDetailModal from "./RecordDetailModal";
 
 export default function DataTable() {
-    const { filteredData, updateFilters, filters } = useData();
+    const filteredData = useDataStore(selectFilteredData);
+    const updateFilters = useDataStore(selectSetFilters);
+    const filters = useDataStore(selectFilters);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [columnVisibility, setColumnVisibility] = useState({});
     const [sorting, setSorting] = useState([]);
@@ -138,7 +145,7 @@ export default function DataTable() {
 
     return (
         <>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 pdf-hide">
                 <div className="flex flex-col sm:flex-row gap-4 mb-4 items-start sm:items-center justify-between">
                     <div className="flex-1 w-full sm:w-auto">
                         <div className="relative">

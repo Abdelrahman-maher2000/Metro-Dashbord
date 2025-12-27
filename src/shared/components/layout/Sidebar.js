@@ -2,12 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MapPin, Menu, X } from "lucide-react";
-import { useState } from "react";
+import {
+    Database,
+    LayoutDashboard,
+    MapPin,
+    Menu,
+    X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/stations", label: "Stations", icon: MapPin },
+    { href: "/admin", label: "Admin", icon: Database },
 ];
 
 export default function Sidebar() {
@@ -50,13 +59,14 @@ export default function Sidebar() {
                         Project Dashboard
                     </p>
                 </div>
-                <nav
+                {/* <nav
                     className="p-4 space-y-2"
                     aria-label="Main navigation"
                 >
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href;
+
                         return (
                             <Link
                                 key={item.href}
@@ -73,6 +83,37 @@ export default function Sidebar() {
                                 aria-current={
                                     isActive ? "page" : undefined
                                 }
+                            >
+                                <Icon size={20} />
+                                <span className="font-medium">
+                                    {item.label}
+                                </span>
+                            </Link>
+                        );
+                    })}
+                </nav> */}
+
+                <nav
+                    className="p-4 space-y-2"
+                    aria-label="Main navigation"
+                >
+                    {navItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href;
+
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setIsOpen(false)}
+                                className={`
+                        flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+                        ${
+                            isActive
+                                ? "bg-blue-100 text-blue-700"
+                                : "text-gray-700 hover:bg-gray-100"
+                        }
+                    `}
                             >
                                 <Icon size={20} />
                                 <span className="font-medium">

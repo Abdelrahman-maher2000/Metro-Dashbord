@@ -1,11 +1,18 @@
 "use client";
 
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectData,
+    selectFilters,
+    selectSetFilters,
+} from "@/stores/useDataStore";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 
 export default function DateRangeFilter() {
-    const { data, filters, updateFilters } = useData();
+    const data = useDataStore(selectData);
+    const filters = useDataStore(selectFilters);
+    const updateFilters = useDataStore(selectSetFilters);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 

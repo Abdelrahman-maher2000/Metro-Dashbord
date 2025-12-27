@@ -9,11 +9,14 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectFilteredData,
+} from "@/stores/useDataStore";
 import { useMemo } from "react";
 
 export default function IncidentsBarChart() {
-    const { filteredData } = useData();
+    const filteredData = useDataStore(selectFilteredData);
 
     const chartData = useMemo(() => {
         const stationIncidents = {};

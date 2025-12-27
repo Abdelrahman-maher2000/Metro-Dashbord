@@ -8,13 +8,19 @@ import {
     CartesianGrid,
     Tooltip,
     Legend,
+    LabelList,
     ResponsiveContainer,
 } from "recharts";
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectFilteredData,
+    selectFilters,
+} from "@/stores/useDataStore";
 import { useMemo } from "react";
 
 export default function BudgetStackedBar() {
-    const { filteredData, filters } = useData();
+    const filteredData = useDataStore(selectFilteredData);
+    const filters = useDataStore(selectFilters);
 
     // When All Stations is selected, create separate charts for each category
     const categoryCharts = useMemo(() => {
@@ -319,13 +325,41 @@ export default function BudgetStackedBar() {
                                         fill="#10b981"
                                         name="Actual %"
                                         radius={[4, 4, 0, 0]}
-                                    />
+                                    >
+                                        <LabelList
+                                            dataKey="actual"
+                                            position="top"
+                                            formatter={(v) =>
+                                                `${v.toFixed(1)}%`
+                                            }
+                                            style={{
+                                                fill: "#064e3b",
+                                                fontSize: 11,
+                                                fontWeight: 600,
+                                            }}
+                                            offset={6}
+                                        />
+                                    </Bar>
                                     <Bar
                                         dataKey="planned"
                                         fill="#3b82f6"
                                         name="Planned %"
                                         radius={[4, 4, 0, 0]}
-                                    />
+                                    >
+                                        <LabelList
+                                            dataKey="planned"
+                                            position="top"
+                                            formatter={(v) =>
+                                                `${v.toFixed(1)}%`
+                                            }
+                                            style={{
+                                                fill: "#1d4ed8",
+                                                fontSize: 11,
+                                                fontWeight: 600,
+                                            }}
+                                            offset={6}
+                                        />
+                                    </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -426,13 +460,37 @@ export default function BudgetStackedBar() {
                         fill="#10b981"
                         name="Actual %"
                         radius={[4, 4, 0, 0]}
-                    />
+                    >
+                        <LabelList
+                            dataKey="actual"
+                            position="top"
+                            formatter={(v) => `${v.toFixed(1)}%`}
+                            style={{
+                                fill: "#064e3b",
+                                fontSize: 11,
+                                fontWeight: 600,
+                            }}
+                            offset={6}
+                        />
+                    </Bar>
                     <Bar
                         dataKey="planned"
                         fill="#3b82f6"
                         name="Planned %"
                         radius={[4, 4, 0, 0]}
-                    />
+                    >
+                        <LabelList
+                            dataKey="planned"
+                            position="top"
+                            formatter={(v) => `${v.toFixed(1)}%`}
+                            style={{
+                                fill: "#1d4ed8",
+                                fontSize: 11,
+                                fontWeight: 600,
+                            }}
+                            offset={6}
+                        />
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
         </div>

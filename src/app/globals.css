@@ -19,6 +19,28 @@ body {
         sans-serif;
 }
 
+
+
+/* Print styles */
+@media print {
+    header,
+    .pdf-hide {
+        display: none !important;
+    }
+
+    main {
+        background: #ffffff !important;
+        color: #000000 !important;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        background: #ffffff !important;
+    }
+}
+
 /* Enhanced card styles */
 .card {
     transition: all 0.3s ease;
@@ -26,4 +48,25 @@ body {
 
 .card:hover {
     transform: translateY(-2px);
+}
+
+/* global.css أو dashboard.css */
+@media print {
+  header, .filter-bar, .pdf-hide, button {
+    display: none !important; /* اخفاء عناصر التحكم */
+  }
+
+  .card {
+    page-break-after: always; 
+    page-break-inside: avoid; 
+  }
+
+  .pie-card {
+    page-break-after: auto; 
+    page-break-inside: avoid; 
+  }
+
+  body {
+    background: #fff;
+  }
 }

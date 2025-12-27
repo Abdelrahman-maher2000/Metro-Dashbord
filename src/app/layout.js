@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { DataProvider } from "@/contexts/DataContext";
-import Sidebar from "@/components/Layout/Sidebar";
+import Sidebar from "@/shared/components/layout/Sidebar";
+import DataInitializer from "@/shared/components/DataInitializer";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -26,14 +26,11 @@ export default function RootLayout({ children }) {
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                 suppressHydrationWarning
             >
-                <DataProvider>
-                    <div className="flex min-h-screen">
-                        <Sidebar />
-                        <div className="flex-1 lg:ml-64">
-                            {children}
-                        </div>
-                    </div>
-                </DataProvider>
+                <DataInitializer />
+                <div className="flex min-h-screen">
+                    <Sidebar />
+                    <div className="flex-1 lg:ml-64">{children}</div>
+                </div>
             </body>
         </html>
     );

@@ -8,13 +8,18 @@ import {
     Tooltip,
     Legend,
 } from "recharts";
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectFilteredData,
+    selectFilters,
+} from "@/stores/useDataStore";
 import { useMemo } from "react";
 
 const COLORS = ["#3b82f6", "#10b981"]; // Blue for Planned, Green for Actual
 
 export default function StatusPieChart() {
-    const { filteredData, filters } = useData();
+    const filteredData = useDataStore(selectFilteredData);
+    const filters = useDataStore(selectFilters);
 
     const activityCharts = useMemo(() => {
         // When All Stations AND All Activities are selected, show charts grouped by Station, then by Activity Name

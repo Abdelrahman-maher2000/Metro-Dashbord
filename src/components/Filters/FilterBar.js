@@ -1,10 +1,17 @@
 "use client";
 
-import { useData } from "@/contexts/DataContext";
+import {
+    useDataStore,
+    selectData,
+    selectFilters,
+    selectSetFilters,
+} from "@/stores/useDataStore";
 import { useMemo } from "react";
 
 export default function FilterBar() {
-    const { data, filters, updateFilters } = useData();
+    const data = useDataStore(selectData);
+    const filters = useDataStore(selectFilters);
+    const updateFilters = useDataStore(selectSetFilters);
 
     const uniqueStations = useMemo(() => {
         const stations = new Set();
@@ -71,7 +78,7 @@ export default function FilterBar() {
     }, [data]);
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6 pdf-hide">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {uniqueStations.length > 0 && (
                     <div>
