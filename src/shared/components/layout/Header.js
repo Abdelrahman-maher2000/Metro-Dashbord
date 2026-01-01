@@ -1,13 +1,14 @@
 "use client";
 
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import {
     createUserWithEmailAndPassword,
     onAuthStateChanged,
     signInWithEmailAndPassword,
     signOut,
-    updateProfile,
 } from "firebase/auth";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { Edit } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function login(e) {
@@ -36,21 +37,88 @@ function reg(e) {
 
 export default function Header() {
     const [loggedin, setLoggedin] = useState("");
+    const [date, setDate] = useState("");
+    const [canEditDate, setCanEditDate] = useState(false);
+    const [isDateFormOpen, setIsDateFormOpen] = useState(false);
+    const [dateInputValue, setDateInputValue] = useState("");
+    const [isSavingDate, setIsSavingDate] = useState(false);
+
     function logout() {
         signOut(auth);
     }
     useEffect(() => {
+        let unsubSnapshot = null;
         const unsubAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setLoggedin(user.displayName || "Regular user ");
+                setCanEditDate(
+                    user.email === "admin@metro4thline.com"
+                );
+
+                const docRef = doc(db, "UpdateDate", "Date");
+                unsubSnapshot = onSnapshot(docRef, {
+                    next: (snapshot) => {
+                        const data = snapshot.data();
+                        if (data) {
+                            setDate(data);
+                        }
+                    },
+                    error: (err) => {
+                        console.log("Error Massege", err);
+                    },
+                });
             } else {
+                setCanEditDate(false);
                 setLoggedin("");
+                setIsDateFormOpen(false);
+                if (unsubSnapshot) {
+                    unsubSnapshot();
+                    unsubSnapshot = null;
+                }
             }
         });
         return () => {
             unsubAuth && unsubAuth();
+            if (unsubSnapshot) {
+                unsubSnapshot();
+                unsubSnapshot = null;
+            }
         };
     }, []);
+    useEffect(() => {
+        if (!isDateFormOpen && date?.Date) {
+            setDateInputValue(date.Date);
+        }
+    }, [date, isDateFormOpen]);
+
+    const handleOpenDateForm = () => {
+        if (!canEditDate) return;
+        setDateInputValue(date?.Date || "");
+        setIsDateFormOpen(true);
+    };
+
+    const handleCancelDateEdit = () => {
+        setIsDateFormOpen(false);
+        setDateInputValue(date?.Date || "");
+    };
+
+    const handleSaveDate = async (e) => {
+        e.preventDefault();
+        if (!dateInputValue) return;
+
+        try {
+            setIsSavingDate(true);
+            const docRef = doc(db, "UpdateDate", "Date");
+            await updateDoc(docRef, { Date: dateInputValue });
+            setDate((prev) => ({ ...prev, Date: dateInputValue }));
+            setIsDateFormOpen(false);
+        } catch (error) {
+            console.error("Failed to update date", error);
+        } finally {
+            setIsSavingDate(false);
+        }
+    };
+
     return (
         <header className="bg-white border-b border-gray-200 shadow-sm px-4 lg:px-8 py-5 pdf-hide">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -63,9 +131,63 @@ export default function Header() {
                         Project Dashboard
                     </p>
 
-                    <p className="text-xs text-gray-500 mt-2">
-                        Last updated: Sep 25th, 2025
-                    </p>
+                    <div className="flex gap-2 items-center mt-2 date">
+                        {!isDateFormOpen && (
+                            <>
+                                <p className="text-xs text-gray-500 mb-0">
+                                    {date?.Date
+                                        ? `Last Update : ${date.Date}`
+                                        : "Last Update : --"}
+                                </p>
+
+                                {canEditDate && (
+                                    <button
+                                        onClick={handleOpenDateForm}
+                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer pdf-hide"
+                                        title="Edit"
+                                        type="button"
+                                    >
+                                        <Edit size={16} />
+                                    </button>
+                                )}
+                            </>
+                        )}
+
+                        {isDateFormOpen && canEditDate && (
+                            <form
+                                onSubmit={handleSaveDate}
+                                className="flex items-center gap-2 flex-wrap pdf-hide"
+                            >
+                                <input
+                                    type="text"
+                                    value={dateInputValue}
+                                    onChange={(e) =>
+                                        setDateInputValue(
+                                            e.target.value
+                                        )
+                                    }
+                                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition"
+                                    aria-label="Last update date"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={isSavingDate}
+                                    className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    {isSavingDate
+                                        ? "Saving..."
+                                        : "Save"}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleCancelDateEdit}
+                                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 transition"
+                                >
+                                    Cancel
+                                </button>
+                            </form>
+                        )}
+                    </div>
                 </div>
 
                 {/* Right Section */}
