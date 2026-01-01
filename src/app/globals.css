@@ -19,8 +19,6 @@ body {
         sans-serif;
 }
 
-
-
 /* Print styles */
 @media print {
     header,
@@ -52,21 +50,28 @@ body {
 
 /* global.css أو dashboard.css */
 @media print {
-  header, .filter-bar, .pdf-hide, button {
-    display: none !important; /* اخفاء عناصر التحكم */
-  }
+    header,
+    .filter-bar,
+    .pdf-hide,
+    button {
+        display: none !important; /* اخفاء عناصر التحكم */
+    }
 
-  .card {
-    page-break-after: always; 
-    page-break-inside: avoid; 
-  }
+    .card {
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
 
-  .pie-card {
-    page-break-after: auto; 
-    page-break-inside: avoid; 
-  }
+    .pie-card {
+        page-break-after: auto;
+        page-break-inside: avoid;
+    }
 
-  body {
-    background: #fff;
-  }
+    body {
+        background: #fff;
+    }
+}
+
+button{
+    cursor: pointer;
 }

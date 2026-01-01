@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+    BarChart3,
     Database,
     LayoutDashboard,
     MapPin,
@@ -17,6 +18,11 @@ const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/stations", label: "Stations", icon: MapPin },
     { href: "/admin", label: "Admin", icon: Database },
+    {
+        href: "/create-your-own-charts",
+        label: "Create Your Own Charts",
+        icon: BarChart3,
+    },
 ];
 
 export default function Sidebar() {

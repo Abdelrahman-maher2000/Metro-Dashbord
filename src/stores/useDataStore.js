@@ -126,7 +126,8 @@ const memoizedFilteredData = createMemoizedSelector((state) =>
     computeFilteredData({ data: state.data, filters: state.filters })
 );
 
-export const selectFilteredData = (state) => memoizedFilteredData(state);
+export const selectFilteredData = (state) =>
+    memoizedFilteredData(state);
 
 const memoizedKPIs = createMemoizedSelector((state) => {
     const filteredData = memoizedFilteredData(state);
@@ -209,3 +210,9 @@ export const selectStations = (state) => memoizedStations(state);
 
 export { normalizeActivity };
 
+export const useClickUpStore = create((set) => ({
+    token: "",
+    setToken: (newToken) => set({ token: newToken }),
+    spaces: {},
+    setSpaces: (newSpaces) => set({ spaces: newSpaces }),
+}));
