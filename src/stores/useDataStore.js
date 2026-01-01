@@ -206,9 +206,9 @@ const memoizedStations = createMemoizedSelector((state) => {
     }));
 });
 
-// export const selectStations = (state) => memoizedStations(state);
+export const selectStations = (state) => memoizedStations(state);
 
-// export { normalizeActivity };
+export { normalizeActivity };
 
 // export const useClickUpStore = create((set) => ({
 //     token: "",
