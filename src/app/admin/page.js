@@ -241,23 +241,6 @@ export default function AdminPage() {
         });
     };
 
-    // Helper function to safely display values
-    // const displayValue = (value, isNumber = false) => {
-    //     if (isNumber) {
-    //         // For numbers, only show N/A if it's null or undefined
-    //         // Allow 0 to be displayed as 0
-    //         if (value === null || value === undefined) {
-    //             return "N/A";
-    //         }
-    //         // Ensure it's displayed as a number
-    //         return typeof value === "number" ? value : Number(value);
-    //     }
-    //     // For strings, show N/A if it's null, undefined, or empty string
-    //     return value && value.toString().trim() !== ""
-    //         ? value
-    //         : "N/A";
-    // };
-
     // Filter documents based on search term
     const filteredDocuments = documents.filter((doc) => {
         const searchLower = searchTerm.toLowerCase();
@@ -338,47 +321,6 @@ export default function AdminPage() {
                     </p>
                 </div>
 
-                {/* <div className="mb-4 bg-gray-200 p-3 rounded-2xl">
-                    <form className="space-y-4" onSubmit={login}>
-                        <div className="flex gap-4 bg-cyan-300 p-2 rounded-2xl">
-                            <label
-                                htmlFor="email"
-                                className="font-bold"
-                            >
-                                Email
-                            </label>
-                            <input
-                                name="email"
-                                type="email"
-                                required
-                                className="border-2 rounded-lg"
-                            />
-                        </div>
-                        <div className="flex gap-4 bg-cyan-300 p-2 rounded-2xl">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                name="password"
-                                type="password"
-                                required
-                                className="border-2 rounded-lg"
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="bg-cyan-400 p-2 rounded-xl"
-                        >
-                            Login
-                        </button>
-                    </form>
-
-                    <button
-                        onClick={logout}
-                        className="bg-cyan-400 p-2 rounded-xl mt-3"
-                    >
-                        Logout
-                    </button>
-                </div> */}
                 <div className="mb-6 w-full bg-white p-6 md:p-8 rounded-3xl shadow-md">
                     <h2 className="text-xl font-semibold text-gray-700 mb-6">
                         {loggedin
@@ -448,21 +390,6 @@ export default function AdminPage() {
                         </button>
                     )}
                 </div>
-
-                {/* <div>
-                    <form onSubmit={dispalyname}>
-                        <label htmlFor="displayname">
-                            dispalyname
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            className="border-2"
-                            name="displayname"
-                        />
-                        <button type="submit">submit</button>
-                    </form>
-                </div> */}
 
                 {/* Documents List Section */}
                 <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
