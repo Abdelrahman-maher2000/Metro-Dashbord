@@ -9,6 +9,7 @@ import {
     MapPin,
     Menu,
     X,
+    ClipboardList,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
@@ -16,6 +17,11 @@ import { auth } from "@/lib/firebase";
 
 const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    {
+        href: "/area-of-concern",
+        label: "Area Of Concern",
+        icon: ClipboardList,
+    },
     { href: "/stations", label: "Stations", icon: MapPin },
     { href: "/admin", label: "Admin", icon: Database },
     {
