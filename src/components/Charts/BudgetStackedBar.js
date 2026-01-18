@@ -16,11 +16,23 @@ import {
     selectFilteredData,
     selectFilters,
 } from "@/stores/useDataStore";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function BudgetStackedBar() {
     const filteredData = useDataStore(selectFilteredData);
     const filters = useDataStore(selectFilters);
+    const [barSizesByChart, setBarSizesByChart] = useState({});
+
+    function BarSize(e, chartKey) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const size = formData.get("barsize");
+        setBarSizesByChart((prev) => ({
+            ...prev,
+            [chartKey]: parseInt(size),
+        }));
+        e.target.reset();
+    }
 
     // When All Stations is selected, create separate charts for each category
     const categoryCharts = useMemo(() => {
@@ -325,6 +337,11 @@ export default function BudgetStackedBar() {
                                         fill="#10b981"
                                         name="Actual %"
                                         radius={[4, 4, 0, 0]}
+                                        barSize={
+                                            barSizesByChart[
+                                                categoryChart.category
+                                            ] ?? 40
+                                        }
                                     >
                                         <LabelList
                                             dataKey="actual"
@@ -345,6 +362,11 @@ export default function BudgetStackedBar() {
                                         fill="#3b82f6"
                                         name="Planned %"
                                         radius={[4, 4, 0, 0]}
+                                        barSize={
+                                            barSizesByChart[
+                                                categoryChart.category
+                                            ] ?? 40
+                                        }
                                     >
                                         <LabelList
                                             dataKey="planned"
@@ -362,6 +384,32 @@ export default function BudgetStackedBar() {
                                     </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
+                            <form
+                                onSubmit={(e) =>
+                                    BarSize(e, categoryChart.category)
+                                }
+                                className="pdf-hide mt-4 flex flex-wrap items-center gap-3"
+                            >
+                                <label className="text-sm font-medium text-gray-700">
+                                    Bar Size
+                                </label>
+                                <input
+                                    type="number"
+                                    name="barsize"
+                                    placeholder={
+                                        barSizesByChart[
+                                            categoryChart.category
+                                        ] ?? 40
+                                    }
+                                    className="w-28 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                />
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold rounded-xl transition"
+                                >
+                                    Apply
+                                </button>
+                            </form>
                         </div>
                     ))}
                 </div>
@@ -460,6 +508,7 @@ export default function BudgetStackedBar() {
                         fill="#10b981"
                         name="Actual %"
                         radius={[4, 4, 0, 0]}
+                        barSize={barSizesByChart.default ?? 40}
                     >
                         <LabelList
                             dataKey="actual"
@@ -478,6 +527,7 @@ export default function BudgetStackedBar() {
                         fill="#3b82f6"
                         name="Planned %"
                         radius={[4, 4, 0, 0]}
+                        barSize={barSizesByChart.default ?? 40}
                     >
                         <LabelList
                             dataKey="planned"
@@ -493,6 +543,26 @@ export default function BudgetStackedBar() {
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
+            <form
+                onSubmit={(e) => BarSize(e, "default")}
+                className="pdf-hide mt-4 flex flex-wrap items-center gap-3"
+            >
+                <label className="text-sm font-medium text-gray-700">
+                    Bar Size
+                </label>
+                <input
+                    type="number"
+                    name="barsize"
+                    placeholder={barSizesByChart.default ?? 40}
+                    className="w-28 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                />
+                <button
+                    type="submit"
+                    className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold rounded-xl transition"
+                >
+                    Apply
+                </button>
+            </form>
         </div>
     );
 }

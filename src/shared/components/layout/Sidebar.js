@@ -9,15 +9,31 @@ import {
     MapPin,
     Menu,
     X,
+    ClipboardList,
+    FileText,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+
+const BLOCKED_EMAIL = "reg@metro4thline.com";
 
 const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/stations", label: "Stations", icon: MapPin },
     { href: "/admin", label: "Admin", icon: Database },
+    {
+        href: "/area-of-concern",
+        label: "Area Of Concern",
+        icon: ClipboardList,
+        requiresAuth: true,
+    },
+    {
+        href: "/monthly-report",
+        label: "Monthly Report",
+        icon: FileText,
+        requiresAuth: true,
+    },
     {
         href: "/create-your-own-charts",
         label: "Create Your Own Charts",
@@ -28,6 +44,26 @@ const navItems = [
 export default function Sidebar() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setCurrentUser(user);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const isBlocked =
+        currentUser?.email && currentUser.email === BLOCKED_EMAIL;
+
+    const visibleItems = useMemo(
+        () =>
+            navItems.filter((item) => {
+                if (!item.requiresAuth) return true;
+                return Boolean(currentUser) && !isBlocked;
+            }),
+        [currentUser, isBlocked]
+    );
 
     return (
         <>
@@ -65,39 +101,6 @@ export default function Sidebar() {
                         Project Dashboard
                     </p>
                 </div>
-                {/* <nav
-                    className="p-4 space-y-2"
-                    aria-label="Main navigation"
-                >
-                    {navItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.href;
-
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setIsOpen(false)}
-                                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-pointer
-                  ${
-                      isActive
-                          ? "bg-blue-100 text-blue-700"
-                          : "text-gray-700 hover:bg-gray-100"
-                  }
-                `}
-                                aria-current={
-                                    isActive ? "page" : undefined
-                                }
-                            >
-                                <Icon size={20} />
-                                <span className="font-medium">
-                                    {item.label}
-                                </span>
-                            </Link>
-                        );
-                    })}
-                </nav> */}
 
                 <nav
                     className="p-4 space-y-2"

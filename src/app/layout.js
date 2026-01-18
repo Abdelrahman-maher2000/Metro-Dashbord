@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/shared/components/layout/Sidebar";
 import DataInitializer from "@/shared/components/DataInitializer";
+import Footer from "@/shared/components/layout/Footer";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -29,7 +30,10 @@ export default function RootLayout({ children }) {
                 <DataInitializer />
                 <div className="flex min-h-screen">
                     <Sidebar />
-                    <div className="flex-1 lg:ml-64">{children}</div>
+                    <div className="flex-1 lg:ml-64 flex flex-col min-h-screen pb-16">
+                        <main className="flex-1">{children}</main>
+                        <Footer />
+                    </div>
                 </div>
             </body>
         </html>
