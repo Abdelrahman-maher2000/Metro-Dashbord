@@ -48,6 +48,7 @@ export default function Dashboard() {
     const [piecardFontsize, setPiecardFontsize] = useState(15);
     const [piecardFooterFontsize, setPiecardFooterFontsize] =
         useState(15);
+    const [barSizesByStation, setBarSizesByStation] = useState({});
 
     function Height(e) {
         e.preventDefault();
@@ -101,6 +102,17 @@ export default function Dashboard() {
         const formData = new FormData(e.target);
         const fontsize = formData.get("fontsize");
         setPiecardFooterFontsize(parseInt(fontsize));
+        e.target.reset();
+    }
+
+    function BarSize(e, stationKey) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const size = formData.get("barsize");
+        setBarSizesByStation((prev) => ({
+            ...prev,
+            [stationKey]: parseInt(size),
+        }));
         e.target.reset();
     }
 
@@ -189,15 +201,25 @@ export default function Dashboard() {
 
                 groups.push({
                     station: stationData.name,
-                    activities: activities.sort((a, b) =>
-                        a.name.localeCompare(b.name)
-                    ),
+                    activities: activities.sort((a, b) => {
+                        // Overall activity goes first (handles "Overall" or "Over All")
+                        const isOverall = (name) =>
+                            name === "Overall" || name === "Over All";
+                        if (isOverall(a.name)) return -1;
+                        if (isOverall(b.name)) return 1;
+                        return a.name.localeCompare(b.name);
+                    }),
                 });
             });
 
-            // Custom sort: Companies first, then St No.01, then Open-Air section, then rest alphabetically
+            // Custom sort: Over All first, then Companies, then St No.01,
+            // then Open-Air section, then rest alphabetically
             return groups.sort((a, b) => {
-                // Companies always comes first
+                // Over All always comes first
+                if (a.station === "Over All") return -1;
+                if (b.station === "Over All") return 1;
+
+                // Companies always comes first after Over All
                 if (a.station === "Companies") return -1;
                 if (b.station === "Companies") return 1;
 
@@ -939,6 +961,11 @@ export default function Dashboard() {
                                                 fill="#10b981"
                                                 name="Actual %"
                                                 radius={[4, 4, 0, 0]}
+                                                barSize={
+                                                    barSizesByStation[
+                                                        group.station
+                                                    ] ?? 100
+                                                }
                                             >
                                                 <LabelList
                                                     dataKey="actual"
@@ -962,6 +989,11 @@ export default function Dashboard() {
                                                 fill="#3b82f6"
                                                 name="Planned %"
                                                 radius={[4, 4, 0, 0]}
+                                                barSize={
+                                                    barSizesByStation[
+                                                        group.station
+                                                    ] ?? 100
+                                                }
                                             >
                                                 <LabelList
                                                     dataKey="planned"
@@ -982,11 +1014,42 @@ export default function Dashboard() {
                                             </Bar>
                                         </BarChart>
                                     </ResponsiveContainer>
+                                    <form
+                                        onSubmit={(e) =>
+                                            BarSize(e, group.station)
+                                        }
+                                        className="pdf-hide mt-4 flex flex-wrap items-center gap-3"
+                                    >
+                                        <label className="text-sm font-medium text-gray-700">
+                                            Bar Size
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="barsize"
+                                            placeholder={
+                                                barSizesByStation[
+                                                    group.station
+                                                ] ?? 100
+                                            }
+                                            className="w-28 px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold rounded-xl transition"
+                                        >
+                                            Apply
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         ))}
                     </div>
                     <DataTable />
+                    <div className="print-footer">
+                        This Dashboard created Form
+                        '4th-line-metro-dashboard.netlify.app'
+                        website, ceated by Eng. Abdelrahman Maher
+                    </div>
                 </main>
             </div>
         );
@@ -1006,6 +1069,9 @@ export default function Dashboard() {
                     <BudgetStackedBar />
                 </div>
                 <DataTable />
+                <div className="print-footer">
+                    This Dashboard ceated by Eng. Abdelrahman Maher
+                </div>
             </main>
         </div>
     );
