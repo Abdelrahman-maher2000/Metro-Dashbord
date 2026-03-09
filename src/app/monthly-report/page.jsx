@@ -1444,10 +1444,21 @@ function MonthlyReportApp({ currentUser }) {
         } else {
           content.push(
             buildTable(
-              ["Trade", "Actual Progress (%)"],
+              ["Trade", "Planned (%)", "Actual Progress (%)", "Variance"],
               sortedConstruction.map((row) => [
                 row.Trade || "--",
-                `${Number(row.ActualProgress || 0)}%`,
+                row.PlannedPercent === undefined || row.PlannedPercent === null
+                  ? "--"
+                  : `${Number(row.PlannedPercent).toFixed(2)}%`,
+                row.ActualProgress === undefined || row.ActualProgress === null
+                  ? "--"
+                  : `${Number(row.ActualProgress).toFixed(2)}%`,
+                row.PlannedPercent === undefined ||
+                  row.PlannedPercent === null ||
+                  row.ActualProgress === undefined ||
+                  row.ActualProgress === null
+                  ? "--"
+                  : formatVariance(row.PlannedPercent, row.ActualProgress),
               ])
             ),
             new Paragraph({ text: "", spacing: { after: 200 } })
