@@ -495,8 +495,8 @@ function ExpandableTables({
             <thead className="bg-[#D9E1F2] text-left uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-3 py-2">Trade</th>
-                <th className="px-3 py-2">Actual %</th>
                 <th className="px-3 py-2">Planned %</th>
+                <th className="px-3 py-2">Actual %</th>
                 <th className="px-3 py-2">Variance</th>
                 <th className="px-3 py-2">Actions</th>
               </tr>
@@ -525,22 +525,22 @@ function ExpandableTables({
                     {row.Trade || "--"}
                   </td>
                   <td className="px-3 py-2 text-slate-600">
+                    {row.PlannedPercent === undefined ||
+                      row.PlannedPercent === null
+                      ? "—"
+                      : `${Number(row.PlannedPercent).toFixed(2)}%`}
+                  </td>
+                  <td className="px-3 py-2 text-slate-600">
                     {row.ActualProgress === undefined ||
-                    row.ActualProgress === null
+                      row.ActualProgress === null
                       ? "—"
                       : `${Number(row.ActualProgress).toFixed(2)}%`}
                   </td>
                   <td className="px-3 py-2 text-slate-600">
                     {row.PlannedPercent === undefined ||
-                    row.PlannedPercent === null
-                      ? "—"
-                      : `${Number(row.PlannedPercent).toFixed(2)}%`}
-                  </td>
-                  <td className="px-3 py-2 text-slate-600">
-                    {row.PlannedPercent === undefined ||
-                    row.PlannedPercent === null ||
-                    row.ActualProgress === undefined ||
-                    row.ActualProgress === null
+                      row.PlannedPercent === null ||
+                      row.ActualProgress === undefined ||
+                      row.ActualProgress === null
                       ? "—"
                       : formatVariance(row.PlannedPercent, row.ActualProgress)}
                   </td>
@@ -695,8 +695,8 @@ function LocationCard({
                 <thead className="bg-[#D9E1F2] text-left uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-3 py-2">Trade</th>
-                    <th className="px-3 py-2">Actual %</th>
                     <th className="px-3 py-2">Planned %</th>
+                    <th className="px-3 py-2">Actual %</th>
                     <th className="px-3 py-2">Variance</th>
                   </tr>
                 </thead>
@@ -720,22 +720,22 @@ function LocationCard({
                         {row.Trade || "--"}
                       </td>
                       <td className="px-3 py-2 text-slate-600">
+                        {row.PlannedPercent === undefined ||
+                          row.PlannedPercent === null
+                          ? "—"
+                          : `${Number(row.PlannedPercent).toFixed(2)}%`}
+                      </td>
+                      <td className="px-3 py-2 text-slate-600">
                         {row.ActualProgress === undefined ||
-                        row.ActualProgress === null
+                          row.ActualProgress === null
                           ? "—"
                           : `${Number(row.ActualProgress).toFixed(2)}%`}
                       </td>
                       <td className="px-3 py-2 text-slate-600">
                         {row.PlannedPercent === undefined ||
-                        row.PlannedPercent === null
-                          ? "—"
-                          : `${Number(row.PlannedPercent).toFixed(2)}%`}
-                      </td>
-                      <td className="px-3 py-2 text-slate-600">
-                        {row.PlannedPercent === undefined ||
-                        row.PlannedPercent === null ||
-                        row.ActualProgress === undefined ||
-                        row.ActualProgress === null
+                          row.PlannedPercent === null ||
+                          row.ActualProgress === undefined ||
+                          row.ActualProgress === null
                           ? "—"
                           : formatVariance(row.PlannedPercent, row.ActualProgress)}
                       </td>
@@ -928,7 +928,7 @@ function MonthlyReportApp({ currentUser }) {
     let pending = allowedLocationIds.length * 2;
     if (pending === 0) {
       setSummariesLoading(false);
-      return () => {};
+      return () => { };
     }
 
     const markLoaded = () => {
@@ -1583,31 +1583,31 @@ function MonthlyReportApp({ currentUser }) {
             <div className="grid gap-4">
               {accessLoading || summariesLoading
                 ? Array.from({ length: 6 }).map((_, idx) => (
-                    <SkeletonCard key={`skeleton-${idx}`} />
-                  ))
+                  <SkeletonCard key={`skeleton-${idx}`} />
+                ))
                 : visibleLocations.length === 0
                   ? (
-                      <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
-                        No authorized locations available for this account.
-                      </div>
-                    )
+                    <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+                      No authorized locations available for this account.
+                    </div>
+                  )
                   : visibleLocations.map((location) => (
-                      <LocationCard
-                        key={location.id}
-                        location={location}
-                        reportMonth={metaData?.reportMonth}
-                        summary={summaries[location.id]}
-                        expanded={Boolean(expandedCards[location.id])}
-                        onToggle={() =>
-                          setExpandedCards((prev) => ({
-                            ...prev,
-                            [location.id]: !prev[location.id],
-                          }))
-                        }
-                        onEditRow={openEditModal}
-                        onDeleteRow={handleDelete}
-                      />
-                    ))}
+                    <LocationCard
+                      key={location.id}
+                      location={location}
+                      reportMonth={metaData?.reportMonth}
+                      summary={summaries[location.id]}
+                      expanded={Boolean(expandedCards[location.id])}
+                      onToggle={() =>
+                        setExpandedCards((prev) => ({
+                          ...prev,
+                          [location.id]: !prev[location.id],
+                        }))
+                      }
+                      onEditRow={openEditModal}
+                      onDeleteRow={handleDelete}
+                    />
+                  ))}
             </div>
           </>
         )}
