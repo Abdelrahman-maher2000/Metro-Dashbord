@@ -67,6 +67,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+function formatVariance(planned, actual) {
+  const variance = Number(planned) - Number(actual);
+  if (variance > 0) return `-${Math.abs(variance).toFixed(2)}`;
+  if (variance < 0) return `+${Math.abs(variance).toFixed(2)}`;
+  return "0.00";
+}
+
 function SkeletonCard() {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -535,9 +542,7 @@ function ExpandableTables({
                     row.ActualProgress === undefined ||
                     row.ActualProgress === null
                       ? "—"
-                      : `${Number(row.PlannedPercent - row.ActualProgress) >= 0 ? "+" : ""}${Number(
-                          row.PlannedPercent - row.ActualProgress
-                        ).toFixed(2)}`}
+                      : formatVariance(row.PlannedPercent, row.ActualProgress)}
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
@@ -732,9 +737,7 @@ function LocationCard({
                         row.ActualProgress === undefined ||
                         row.ActualProgress === null
                           ? "—"
-                          : `${Number(row.PlannedPercent - row.ActualProgress) >= 0 ? "+" : ""}${Number(
-                              row.PlannedPercent - row.ActualProgress
-                            ).toFixed(2)}`}
+                          : formatVariance(row.PlannedPercent, row.ActualProgress)}
                       </td>
                     </tr>
                   ))}
