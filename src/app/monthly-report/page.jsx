@@ -34,20 +34,20 @@ import { saveAs } from "file-saver";
 import BlockedEmailGuard from "@/shared/components/BlockedEmailGuard";
 
 const LOCATIONS = [
-  { id: "station01", name: "Station 01" },
+  { id: "station01", name: "St No.01 - Hadaek El Ashgar Station" },
   { id: "openAir", name: "Open Air" },
   { id: "verticalShaft", name: "Vertical Shaft" },
-  { id: "station02", name: "Station 02" },
-  { id: "station03", name: "Station 03" },
-  { id: "station04", name: "Station 04" },
-  { id: "station05", name: "Station 05" },
-  { id: "station06", name: "Station 06" },
-  { id: "station07", name: "Station 07" },
-  { id: "station08", name: "Station 08" },
-  { id: "station09", name: "Station 09" },
-  { id: "station10", name: "Station 10" },
-  { id: "station11", name: "Station 11" },
-  { id: "station12", name: "Station 12" },
+  { id: "station02", name: "St No.02 - Hadaek El Ahram Station" },
+  { id: "station03", name: "St No.03 - El Nasr Station" },
+  { id: "station04", name: "St No.04 - Grand Egyptian Musiem Station" },
+  { id: "station05", name: "St No.05 - El Remaya Station" },
+  { id: "station06", name: "St No.06 - El Ahramat Station" },
+  { id: "station07", name: "St No.07 - Maryoutia Station" },
+  { id: "station08", name: "St No.08 - El Arish Station" },
+  { id: "station09", name: "St No.09 - El Matba’a Station" },
+  { id: "station10", name: "St No.10 - El Talbeya Station" },
+  { id: "station11", name: "St No.11 - Madkour Station" },
+  { id: "station12", name: "St No.12 - El Mesaha Square Station" },
 ];
 
 const ADMIN_UIDS = ["uz0dBxZBcAREVmdBoqvx3hRWdo63"];

@@ -41,7 +41,7 @@ export default function PieComparisonChart({ title, planned = 0, actual = 0 }) {
                 fontSize={16}
                 fontWeight={700}
             >
-                {`${Number(value).toFixed(1)}%`}
+                {`${Number(value).toFixed(2)}%`}
             </text>
         );
     };
@@ -77,11 +77,11 @@ export default function PieComparisonChart({ title, planned = 0, actual = 0 }) {
             <div className="mt-3 space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                     <span className="text-slate-700">Planned:</span>
-                    <span className="font-bold text-blue-600">{plannedValue.toFixed(1)}%</span>
+                    <span className="font-bold text-blue-600">{plannedValue.toFixed(2)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                     <span className="text-slate-700">Actual:</span>
-                    <span className="font-bold text-emerald-600">{actualValue.toFixed(1)}%</span>
+                    <span className="font-bold text-emerald-600">{actualValue.toFixed(2)}%</span>
                 </div>
             </div>
         </div>

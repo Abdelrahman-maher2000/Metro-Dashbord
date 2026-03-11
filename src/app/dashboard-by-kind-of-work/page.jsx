@@ -9,9 +9,9 @@ import HistogramChart from "@/components/dashboard-by-kind-of-work/HistogramChar
 const WORK_TYPES = ["civil", "mechanical", "electrical", "arch"];
 
 const SECTIONS = [
-    { key: "construction", label: "Construction" },
-    { key: "procurement", label: "Procurement" },
     { key: "engineering", label: "Engineering" },
+    { key: "procurement", label: "Procurement" },
+    { key: "construction", label: "Construction" },
 ];
 
 function toSafeNumber(value) {
@@ -136,20 +136,20 @@ export default function DashboardByKindOfWorkPage() {
         // Build histogram datasets per station and per section.
         return stationsData.map((station) => {
             const histogramDataBySection = {
-                construction: WORK_TYPES.map((kind) => ({
+                engineering: WORK_TYPES.map((kind) => ({
                     kind: kind.charAt(0).toUpperCase() + kind.slice(1),
-                    planned: toSafeNumber(station.sections?.construction?.planned?.[kind]),
-                    actual: toSafeNumber(station.sections?.construction?.actual?.[kind]),
+                    planned: toSafeNumber(station.sections?.engineering?.planned?.[kind]),
+                    actual: toSafeNumber(station.sections?.engineering?.actual?.[kind]),
                 })),
                 procurement: WORK_TYPES.map((kind) => ({
                     kind: kind.charAt(0).toUpperCase() + kind.slice(1),
                     planned: toSafeNumber(station.sections?.procurement?.planned?.[kind]),
                     actual: toSafeNumber(station.sections?.procurement?.actual?.[kind]),
                 })),
-                engineering: WORK_TYPES.map((kind) => ({
+                construction: WORK_TYPES.map((kind) => ({
                     kind: kind.charAt(0).toUpperCase() + kind.slice(1),
-                    planned: toSafeNumber(station.sections?.engineering?.planned?.[kind]),
-                    actual: toSafeNumber(station.sections?.engineering?.actual?.[kind]),
+                    planned: toSafeNumber(station.sections?.construction?.planned?.[kind]),
+                    actual: toSafeNumber(station.sections?.construction?.actual?.[kind]),
                 })),
             };
 
@@ -241,16 +241,16 @@ export default function DashboardByKindOfWorkPage() {
                                     </h3>
                                     <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                                         <HistogramChart
-                                            title="Construction Histogram"
-                                            data={station.histogramDataBySection.construction}
+                                            title="Engineering Histogram"
+                                            data={station.histogramDataBySection.engineering}
                                         />
                                         <HistogramChart
                                             title="Procurement Histogram"
                                             data={station.histogramDataBySection.procurement}
                                         />
                                         <HistogramChart
-                                            title="Engineering Histogram"
-                                            data={station.histogramDataBySection.engineering}
+                                            title="Construction Histogram"
+                                            data={station.histogramDataBySection.construction}
                                         />
                                     </div>
                                 </div>
